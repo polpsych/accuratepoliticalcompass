@@ -1,0 +1,62 @@
+.flex-container {
+    display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+    display: -ms-flexbox;  /* TWEENER - IE 10 */
+    display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+    display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */    
+    justify-content: center;
+    align-items: center;
+}
+.percentage-row {
+    width:150px;
+    max-width:150px;
+    display: inline-block;
+}
+/* Disagree */
+.label-d {
+    background: #ff0000;
+    color: #fff;
+    display: block;
+    width: 100px;
+    cursor: pointer;
+    display: block;
+    width: 5em;
+    border-radius: 8px;
+}
+.label-d:hover {
+    background:#ccc;   
+}
+/* Neutral */
+.label-n {
+    background: #a0a0a0;
+    color: #fff;
+    display: block;
+    width: 100px;
+    cursor: pointer;
+    display: block;
+    width: 5em;
+    border-radius: 8px;
+}
+.label-n:hover {
+    background:#ccc;   
+}
+/* Agree */
+.label-a {
+    background: #00a0e0;
+    color: #fff;
+    display: block;
+    width: 100px;
+    cursor: pointer;
+    display: block;
+    width: 5em;
+    border-radius: 8px;
+}
+.label-a:hover {
+    background:#ccc;   
+}
+/* Style the label when its inner radio button is checked */
+label:has(input[type="radio"]:checked){
+    color: black;
+    font-weight: bold;
+    border-color: black;
+    border-width: 5px;
+}
