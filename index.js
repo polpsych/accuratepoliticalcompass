@@ -1,4 +1,9 @@
 // Globals
+// Quadrant colors
+const RED = '#ff7575';
+const BLUE = '#42aaff';
+const GREEN = '#9aed97';
+const YELLOW = '#f5f471';
 // Mapping of questions to a dict of their weights for each political value
 const questions = {
     "1. Intellectual property is a legitimate concept.":
@@ -196,7 +201,6 @@ var valuePercentages = {
     "inclusivityDec": 0,
     "heritageDec": 0
 };
-
 // Index of the currently shown question on the page
 let currQuestionIdx = 0;
 // List of all the possible answers to each question
@@ -518,97 +522,109 @@ function submitButton() {
     // Hide the submit button now that the result has been submitted
     let submitButton = document.querySelector(".submitButton");
     submitButton.hidden = true;
-    // Render the chart
+    // Configure and setup the chart
     let container = document.getElementById("container");
-    let chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container',
-            defaultSeriesType:'scatter',
-            borderWidth:1,
-            borderColor:'#ccc',
-            marginLeft:90,
-            marginRight:50,
-            backgroundColor:'#eee',
-            plotBackgroundColor:'#fff',
-        },
-        credits:{enabled:false},
-        title: {
-            text: "Results",
-        },
-        legend:{
-            enabled: false                                
-        },
-        tooltip: {
-            formatter: function() {
-                return this.x.toFixed(3) +', '+ this.y.toFixed(3);
+    const resultsData = [ 
+        {x: rightLeftCoord, y:authLibCoord}
+    ];
+    const quadrants = {
+        id: 'quadrants',
+        beforeDraw(chart, args, options) {
+            // Draws each quadrant in a different color
+            const {ctx, scales: {x, y}} = chart;
+            ctx.save();
+            ctx.fillStyle = options.topLeft;
+            ctx.fillRect(57, 11, 138, 138); // Top Left
+            ctx.fillStyle = options.topRight;
+            ctx.fillRect(197, 11, 139, 138); // Top Right
+            ctx.fillStyle = options.bottomRight;
+            ctx.fillRect(197, 150, 139, 138); // Bottom Right
+            ctx.fillStyle = options.bottomLeft;
+            ctx.fillRect(57, 150, 139, 138); // Bottom Left
+            // Draws the gridlines overtop the quadrants
+            // Vertical gridline
+            ctx.strokeStyle = "black";
+            ctx.beginPath();
+            ctx.moveTo(196, 11);
+            ctx.lineTo(196, 288);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            // Horizontal gridline
+            ctx.strokeStyle = "black";
+            ctx.beginPath();
+            ctx.moveTo(57, 150);
+            ctx.lineTo(336, 150);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            // Restore the chart
+            ctx.restore();
+        }
+    };
+    const config = { 
+        type: 'scatter', 
+        data: { 
+            datasets: [{ 
+                // label: "Result",
+                data: resultsData, 
+            }], 
+        }, 
+        options: {
+            scales: {
+                x: {
+                    type: 'linear', 
+                    position: 'bottom', 
+                    title: { 
+                        display: true, 
+                        text: 'Left-Right',
+                    },
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                        stepSize: 5.0,
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }, 
+                y: { 
+                    type: "linear",
+                    position: "left",
+                    title: { 
+                        display: true, 
+                        text: "Libertarian-Authoritarian", 
+                    },
+                    ticks: {
+                        maxTicksLimit: 20
+                    },
+                    min: 0,
+                    max: 100,
+                }, 
+            },
+            responsive: false,
+            elements: { 
+                point: { 
+                    borderColor: "rgba(255, 255, 255, 1.0)",
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    radius: 4, 
+                    hoverRadius: 10, 
+                }, 
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                quadrants: {
+                    topLeft: RED,
+                    topRight: BLUE,
+                    bottomRight: YELLOW,
+                    bottomLeft: GREEN,
+                }
             }
         },
-        plotOptions: {
-            series: {
-                shadow: false,
-            }
-        },
-        xAxis:{
-            title:{
-                text: 'Left-Right'
-            },
-            min: 0,
-            max: 100,
-            lineColor: '#aaa',
-            gridlineWidth: 1,
-            minorTickInterval: 5,
-            startOnTick: true,
-            endOnTick: true
-        },
-        yAxis:{
-            title:{
-                text: 'Libertarian-Authoritarian',
-            },
-            min: 0,
-            max: 100,
-            lineColor: '#aaa',
-            gridlineWidth: 1,
-            minorTickInterval: 5,
-            startOnTick: true,
-            endOnTick: true
-        },
-        series: [{
-            color: '#185aa9',
-            data: data
-        }]
-    }, function(chart) { // on complete
-            var width = chart.plotBox.width / 2.0;
-            var height = chart.plotBox.height / 2.0 + 1;
-            // Color the quadrants
-            chart.renderer.rect(chart.plotBox.x,                      
-                                chart.plotBox.y, width, height, 1)
-                .attr({
-                    fill: '#ff7575',
-                    zIndex: 0
-                })
-                .add();
-            chart.renderer.rect(chart.plotBox.x + width,                      
-                                    chart.plotBox.y, width, height, 1)
-                    .attr({
-                        fill: '#42aaff',
-                        zIndex: 0
-                    })
-                    .add();
-            chart.renderer.rect(chart.plotBox.x,                      
-                chart.plotBox.y + height, width, height, 1)
-                    .attr({
-                        fill: '#9aed97',
-                        zIndex: 0
-                    })
-                    .add();
-            chart.renderer.rect(chart.plotBox.x + width,                      
-                chart.plotBox.y + height, width, height, 1)
-                    .attr({
-                        fill: '#f5f471',
-                        zIndex: 0
-                    })
-                    .add();
-    });
+        plugins: [quadrants]
+    };
+    // Create and render the chart
+    const ctx = document.getElementById("results").getContext("2d");
+    new Chart(ctx, config);
     // Show the chart
     container.hidden = false;
     // Display the percentage ranges

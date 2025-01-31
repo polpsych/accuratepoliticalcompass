@@ -3,10 +3,11 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="index.css">
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
         <title>Political Compass Quiz</title>
     </head>
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript" src="index.js"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js "></script>
+    <script type="text/javascript" src="./index.js"></script>
     <body onload="displayQuestions()">
         <h1 id="main-h" style="text-align:center;">Political Compass Quiz</h1>
         <div class="questions-outer">
@@ -21,8 +22,9 @@
     </body>
     <!-- Container for the category percentages and their bars -->
     <div id="categories" class="" style="text-align: center;"></div>
-    <!-- Final chart showing results -->
     </br>
-    <div id="container" style="height:500px; width:500px; margin: auto;" hidden>
+    <!-- Container holding the final chart showing results -->
+    <div id="container" style="margin: auto; justify-content: center; display: flex;" hidden>
+        <canvas id="results" height="350" width="350" margin="auto"></canvas>
     </div>
 </html>
